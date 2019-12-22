@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1576802758 source:c:\users\王徐\shu-project\数据结构\ex1-4\main.cpp
+	<iostream>
+	"ADJGraph.h"
+
+1576802960 c:\users\王徐\shu-project\数据结构\ex1-4\adjgraph.h
+
