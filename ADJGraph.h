@@ -15,13 +15,12 @@ enum Stats {
 // ////////////////////// Arc ////////////////////////////////
 
 template <class NodeType, class WeightType>
-class ADJArc
-{
+class ADJArc {
 public:
-	int tag;
-	WeightType weight;
-	int from_node, to_node;
-	ADJArc<NodeType, WeightType> *from_next, *to_next;
+    int tag;
+    WeightType weight;
+    int from_node, to_node;
+    ADJArc<NodeType, WeightType>*from_next, *to_next;
 
 public:
     ADJArc();
@@ -63,12 +62,11 @@ int ADJArc<NodeType, WeightType>::get_Num(int u) const
 // ////////////////////// Node ////////////////////////////////
 
 template <class NodeType, class WeightType>
-class ADJNode
-{
+class ADJNode {
 public:
-	bool tag;
-	NodeType data;
-	ADJArc<NodeType, WeightType> *first_arc;
+    bool tag;
+    NodeType data;
+    ADJArc<NodeType, WeightType>* first_arc;
 
 public:
     ADJNode();
@@ -76,14 +74,19 @@ public:
 };
 
 template <class NodeType, class WeightType>
-ADJNode<NodeType, WeightType>::ADJNode() : tag(0), data(0), first_arc(NULL) {}
+ADJNode<NodeType, WeightType>::ADJNode()
+    : tag(0)
+    , data(0)
+    , first_arc(NULL)
+{
+}
 
 template <class NodeType, class WeightType>
 ADJNode<NodeType, WeightType>::ADJNode(const NodeType& Data, const ADJArc<NodeType, WeightType>* FirstArc)
 {
-	this->tag = 0;
-	this->data = Data;
-	this->first_arc = FirstArc;
+    this->tag = 0;
+    this->data = Data;
+    this->first_arc = FirstArc;
 }
 
 // ////////////////////// Graph ////////////////////////////////
@@ -91,18 +94,18 @@ ADJNode<NodeType, WeightType>::ADJNode(const NodeType& Data, const ADJArc<NodeTy
 template <class NodeType, class WeightType>
 class ADJGraph {
 private:
-	int node_count;
-	int max_size;
-	ADJNode<NodeType, WeightType> *node_array;
-	int simple_path(const int &st, const int &ed, int u, int len, int l);
+    int node_count;
+    int max_size;
+    ADJNode<NodeType, WeightType>* node_array;
+    int simple_path(const int& st, const int& ed, int u, int len, int l);
 
 public:
-	ADJGraph(const int MaxSize);
-	Stats add_Node(const NodeType &Data);
-	Stats add_Arc(const int FromNode, const int ToNode, const WeightType &Weight);
-	ADJNode<NodeType, WeightType>* get_Nodeptr(const int &node);
-	int simple_path(const int &st, const int &ed, int len);
-	void print_Node() const;
+    ADJGraph(const int MaxSize);
+    Stats add_Node(const NodeType& Data);
+    Stats add_Arc(const int FromNode, const int ToNode, const WeightType& Weight);
+    ADJNode<NodeType, WeightType>* get_Nodeptr(const int& node);
+    int simple_path(const int& st, const int& ed, int len);
+    void print_Node() const;
     void print_Graph() const;
 };
 
@@ -142,33 +145,69 @@ Stats ADJGraph<NodeType, WeightType>::add_Arc(int FromNode, int ToNode, const We
     if (FromNode == ToNode) {
         return INVALID_VAULE;
     }
-    int from = FromNode < ToNode ? FromNode : ToNode;
-    int to = FromNode > ToNode ? FromNode : ToNode;
+    int from = min(FromNode, ToNode);
+    int to = max(FromNode, ToNode);
     ADJArc<NodeType, WeightType>* new_arc = new ADJArc<NodeType, WeightType>(Weight, from, to, NULL, NULL);
     if (this->node_array[from].first_arc == NULL) {
         this->node_array[from].first_arc = new_arc;
     }
     else {
         ADJArc<NodeType, WeightType>* p = this->node_array[from].first_arc;
-        for (; p->from_next != NULL; p = p->from_next)
-            ;
-        p->from_next = new_arc;
+        while (1) {
+            int num = p->get_Num(from);
+            if (num == 1) {
+                if (p->from_next)
+                    p = p->from_next;
+                else
+                    break;
+            }
+            else {
+                if (p->to_next)
+                    p = p->to_next;
+                else
+                    break;
+            }
+        }
+        int num = p->get_Num(from);
+        if (num == 1)
+            p->from_next = new_arc;
+        else
+            p->to_next = new_arc;
     }
     if (this->node_array[to].first_arc == NULL) {
         this->node_array[to].first_arc = new_arc;
     }
     else {
         ADJArc<NodeType, WeightType>* p = this->node_array[to].first_arc;
-        for (; p->to_next != NULL; p = p->to_next)
-            ;
-        p->to_next = new_arc;
+        while (1) {
+            int num = p->get_Num(to);
+            if (num == 1) {
+                if (p->from_next)
+                    p = p->from_next;
+                else
+                    break;
+            }
+            else {
+                if (p->to_next)
+                    p = p->to_next;
+                else
+                    break;
+            }
+        }
+        int num = p->get_Num(to);
+        if (num == 1)
+            p->from_next = new_arc;
+        else
+            p->to_next = new_arc;
     }
 }
 
 template <class NodeType, class WeightType>
-ADJNode<NodeType, WeightType>* ADJGraph<NodeType,WeightType>::get_Nodeptr(const int &node){
-	if(node >= node_count) throw OVER_RANGE;
-	return node_array+node;
+ADJNode<NodeType, WeightType>* ADJGraph<NodeType, WeightType>::get_Nodeptr(const int& node)
+{
+    if (node >= node_count)
+        throw OVER_RANGE;
+    return node_array + node;
 }
 
 template <class NodeType, class WeightType>
@@ -203,34 +242,35 @@ void ADJGraph<NodeType, WeightType>::print_Graph() const
     }
 }
 
-template<class NodeType, class WeightType>
-int ADJGraph<NodeType, WeightType>::simple_path(const int &st, const int &ed, int u, int len, int l)
+template <class NodeType, class WeightType>
+int ADJGraph<NodeType, WeightType>::simple_path(const int& st, const int& ed, int u, int len, int l)
 {
-	if(l==len){
-		return u == ed;
-	}
-	int _cnt = 0;
-	ADJNode<NodeType,WeightType> *node_u = get_Nodeptr(u);
-	ADJArc<NodeType,WeightType> *EDGE = node_u->first_arc;
-	while (EDGE!=NULL)
-	{
-		int v = 0;
-		if(EDGE->get_Num(u)==1) v = EDGE->to_node,EDGE = EDGE->from_next;
-		else v = EDGE->from_node,EDGE = EDGE->to_next;
-		ADJNode<NodeType,WeightType> *node_v = get_Nodeptr(v);
-		if(node_v->tag==0){
-			node_v->tag=1;
-			_cnt += simple_path(st,ed,v,len,l+1);
-			node_v->tag=0;
-		}
-	}
-	return _cnt;
+    if (l == len) {
+        return u == ed;
+    }
+    int _cnt = 0;
+    ADJNode<NodeType, WeightType>* node_u = get_Nodeptr(u);
+    ADJArc<NodeType, WeightType>* EDGE = node_u->first_arc;
+    while (EDGE != NULL) {
+        int v = 0;
+        if (EDGE->get_Num(u) == 1)
+            v = EDGE->to_node, EDGE = EDGE->from_next;
+        else
+            v = EDGE->from_node, EDGE = EDGE->to_next;
+        ADJNode<NodeType, WeightType>* node_v = get_Nodeptr(v);
+        if (node_v->tag == 0) {
+            node_v->tag = 1;
+            _cnt += simple_path(st, ed, v, len, l + 1);
+            node_v->tag = 0;
+        }
+    }
+    return _cnt;
 }
 
-template<class NodeType, class WeightType>
-int ADJGraph<NodeType, WeightType>::simple_path(const int &st, const int &ed, int len)
+template <class NodeType, class WeightType>
+int ADJGraph<NodeType, WeightType>::simple_path(const int& st, const int& ed, int len)
 {
-	return simple_path(st,ed,st,len,0);
+    return simple_path(st, ed, st, len, 0);
 }
 
 #endif

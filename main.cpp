@@ -23,14 +23,13 @@ int main()
     TEST.add_Arc(1, 3, 1.0);
     TEST.add_Arc(2, 3, 1.0);
 
-
     cout << '\n';
-    cout << TEST.simple_path(0,1,3);
+    //cout << TEST.simple_path(0, 1, 3);
     cout << '\n';
     cout << '\n';
     TEST.print_Graph();
-    TEST.add_Node('C');
-    TEST.print_Graph();
+    //TEST.add_Node('C');
+    //TEST.print_Graph();
     cout << "\nHello world!" << endl;
     return 0;
 }
