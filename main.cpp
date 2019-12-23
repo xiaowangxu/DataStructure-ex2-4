@@ -1,7 +1,7 @@
 /*
  * @Date         : 2019-12-23 13:16:53
  * @Author       : ssyze
- * @Description  : 
+ * @Description  :
  */
 #include "ADJGraph.h"
 #include <iostream>
@@ -13,8 +13,20 @@ int main()
     ADJGraph<char, double> TEST(100);
     TEST.add_Node('A');
     TEST.add_Node('B');
+    TEST.add_Node('C');
+    TEST.add_Node('D');
     TEST.print_Node();
     TEST.add_Arc(0, 1, 1.0);
+    TEST.add_Arc(0, 2, 1.0);
+    TEST.add_Arc(0, 3, 1.0);
+    TEST.add_Arc(1, 2, 1.0);
+    TEST.add_Arc(1, 3, 1.0);
+    TEST.add_Arc(2, 3, 1.0);
+
+
+    cout << '\n';
+    cout << TEST.simple_path(0,1,3);
+    cout << '\n';
     cout << '\n';
     TEST.print_Graph();
     TEST.add_Node('C');

@@ -150,7 +150,7 @@ Stats ADJGraph<NodeType, WeightType>::add_Arc(int FromNode, int ToNode, const We
     }
     else {
         ADJArc<NodeType, WeightType>* p = this->node_array[from].first_arc;
-        for (; p->from_next == NULL; p = p->from_next)
+        for (; p->from_next != NULL; p = p->from_next)
             ;
         p->from_next = new_arc;
     }
@@ -159,7 +159,7 @@ Stats ADJGraph<NodeType, WeightType>::add_Arc(int FromNode, int ToNode, const We
     }
     else {
         ADJArc<NodeType, WeightType>* p = this->node_array[to].first_arc;
-        for (; p->to_next == NULL; p = p->to_next)
+        for (; p->to_next != NULL; p = p->to_next)
             ;
         p->to_next = new_arc;
     }
@@ -168,7 +168,7 @@ Stats ADJGraph<NodeType, WeightType>::add_Arc(int FromNode, int ToNode, const We
 template <class NodeType, class WeightType>
 ADJNode<NodeType, WeightType>* ADJGraph<NodeType,WeightType>::get_Nodeptr(const int &node){
 	if(node >= node_count) throw OVER_RANGE;
-	return node_array+node; 
+	return node_array+node;
 }
 
 template <class NodeType, class WeightType>
@@ -211,11 +211,11 @@ int ADJGraph<NodeType, WeightType>::simple_path(const int &st, const int &ed, in
 	}
 	int _cnt = 0;
 	ADJNode<NodeType,WeightType> *node_u = get_Nodeptr(u);
-	ADJArc<NodeType,WeightType> EDGE = node_u->first_arc;
+	ADJArc<NodeType,WeightType> *EDGE = node_u->first_arc;
 	while (EDGE!=NULL)
 	{
 		int v = 0;
-		if(EDGE->from_node==u) v = EDGE->to_node,EDGE = EDGE->from_next;
+		if(EDGE->get_Num(u)==1) v = EDGE->to_node,EDGE = EDGE->from_next;
 		else v = EDGE->from_node,EDGE = EDGE->to_next;
 		ADJNode<NodeType,WeightType> *node_v = get_Nodeptr(v);
 		if(node_v->tag==0){
