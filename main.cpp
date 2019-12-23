@@ -30,6 +30,8 @@ int main()
     TEST.print_Graph();
     //TEST.add_Node('C');
     //TEST.print_Graph();
+    TEST.delete_Arc(0, 1);
+    TEST.print_Graph();
     cout << "\nHello world!" << endl;
     return 0;
 }
