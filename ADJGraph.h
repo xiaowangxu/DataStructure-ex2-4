@@ -245,11 +245,14 @@ void ADJGraph<NodeType, WeightType>::print_Graph() const
 template <class NodeType, class WeightType>
 int ADJGraph<NodeType, WeightType>::simple_path(const int& st, const int& ed, int u, int len, int l)
 {
+    ADJNode<NodeType, WeightType>* node_u = get_Nodeptr(u);
+    node_u->tag = 1;
     if (l == len) {
+        node_u->tag = 0;
         return u == ed;
     }
     int _cnt = 0;
-    ADJNode<NodeType, WeightType>* node_u = get_Nodeptr(u);
+
     ADJArc<NodeType, WeightType>* EDGE = node_u->first_arc;
     while (EDGE != NULL) {
         int v = 0;
@@ -259,11 +262,10 @@ int ADJGraph<NodeType, WeightType>::simple_path(const int& st, const int& ed, in
             v = EDGE->from_node, EDGE = EDGE->to_next;
         ADJNode<NodeType, WeightType>* node_v = get_Nodeptr(v);
         if (node_v->tag == 0) {
-            node_v->tag = 1;
             _cnt += simple_path(st, ed, v, len, l + 1);
-            node_v->tag = 0;
         }
     }
+    node_u->tag = 0;
     return _cnt;
 }
 
