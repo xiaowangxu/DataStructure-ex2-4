@@ -17,7 +17,7 @@ enum Stats
 template <class NodeType, class WeightType>
 class ADJArc
 {
-public:
+private:
 	int tag;
 	WeightType weight;
 	int from_node, to_node;
@@ -47,7 +47,7 @@ ADJArc<NodeType, WeightType>::ADJArc(WeightType Weight, const int &FromNode, con
 template <class NodeType, class WeightType>
 class ADJNode
 {
-public:
+private:
 	NodeType data;
 	ADJArc<NodeType, WeightType> *first_arc;
 
