@@ -28,9 +28,14 @@ int main()
     cout << '\n';
     cout << '\n';
     TEST.print_Graph();
+    cout << '\n';
     //TEST.add_Node('C');
     //TEST.print_Graph();
     TEST.delete_Arc(0, 1);
+    TEST.print_Graph();
+    cout << '\n';
+    TEST.delete_Node(0);
+    TEST.delete_Node(1);
     TEST.print_Graph();
     cout << "\nHello world!" << endl;
     return 0;

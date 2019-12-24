@@ -70,7 +70,7 @@ public:
 
 public:
     ADJNode();
-    ADJNode(const NodeType& Data, const ADJArc<NodeType, WeightType>* FirstArc);
+    ADJNode(const NodeType& Data, ADJArc<NodeType, WeightType>* FirstArc);
 };
 
 template <class NodeType, class WeightType>
@@ -82,7 +82,7 @@ ADJNode<NodeType, WeightType>::ADJNode()
 }
 
 template <class NodeType, class WeightType>
-ADJNode<NodeType, WeightType>::ADJNode(const NodeType& Data, const ADJArc<NodeType, WeightType>* FirstArc)
+ADJNode<NodeType, WeightType>::ADJNode(const NodeType& Data, ADJArc<NodeType, WeightType>* FirstArc)
 {
     this->tag = 0;
     this->data = Data;
@@ -108,6 +108,7 @@ public:
     void print_Node() const;
     void print_Graph() const;
     void delete_Arc(int u, int v) const;
+    void delete_Node(int u);
 };
 
 template <class NodeType, class WeightType>
@@ -300,7 +301,7 @@ void ADJGraph<NodeType, WeightType>::delete_Arc(int u, int v) const
         return;
     }
     if ((tmpu->from_node == u && tmpu->to_node == v) || (tmpu->from_node == v && tmpu->to_node == u)) {
-        cout << "tmpu" << endl;
+        //cout << "tmpu" << endl;
         while (1) {
             int num = tmpv->get_Num(v);
             //cout << num << endl;
@@ -528,6 +529,29 @@ void ADJGraph<NodeType, WeightType>::delete_Arc(int u, int v) const
             vpre->from_next = NULL;
         else
             vpre->to_next = NULL;
+    }
+}
+
+template <class NodeType, class WeightType>
+void ADJGraph<NodeType, WeightType>::delete_Node(int u){
+    ADJNode<NodeType,WeightType> *nodeu = get_Nodeptr(u);
+    ADJArc<NodeType,WeightType> *arcu = nodeu->first_arc,*lstarc;
+    while(arcu != NULL){
+        lstarc = arcu;
+        if(arcu -> get_Num(u) == 1) arcu = arcu -> from_next;
+        else arcu = arcu -> to_next;
+        delete_Arc(lstarc->from_node,lstarc->to_node);
+    }
+    for(int i = u; i < node_count-1; ++i){
+        node_array[i] = ADJNode<NodeType,WeightType>(node_array[i+1].data,node_array[i+1].first_arc);
+    }
+    node_count--;
+    for(int i = u; i < node_count; ++i){
+        arcu = get_Nodeptr(i)->first_arc;
+        while(arcu!=NULL){
+            if(arcu -> get_Num(i+1) == 1) arcu -> from_node--,arcu = arcu -> from_next;
+            else arcu -> to_node--,arcu = arcu -> to_next;
+        }
     }
 }
 
