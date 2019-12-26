@@ -141,6 +141,7 @@ int ADJGraph<NodeType, WeightType>::get_NodeOrder(const NodeType &value) const
 		if (this->node_array[i].data == value)
 			return i;
 	}
+	return -1;
 }
 
 template <class NodeType, class WeightType>
@@ -153,6 +154,7 @@ Stats ADJGraph<NodeType, WeightType>::add_Node(const NodeType &Data)
 	else
 	{
 		this->node_array[this->node_count].data = Data;
+		// this->node_array[this->node_count].first_arc = NULL;
 		this->node_count++;
 		return SUCCEEDED;
 	}
@@ -169,8 +171,8 @@ Stats ADJGraph<NodeType, WeightType>::add_Arc(int FromNode, int ToNode, const We
 	{
 		return INVALID_VAULE;
 	}
-	int from = min(FromNode, ToNode);
-	int to = max(FromNode, ToNode);
+	int from = FromNode < ToNode ? FromNode : ToNode;
+	int to = FromNode > ToNode ? FromNode : ToNode;
 	ADJArc<NodeType, WeightType> *new_arc = new ADJArc<NodeType, WeightType>(Weight, from, to, NULL, NULL);
 	if (this->node_array[from].first_arc == NULL)
 	{
@@ -234,6 +236,7 @@ Stats ADJGraph<NodeType, WeightType>::add_Arc(int FromNode, int ToNode, const We
 		else
 			p->to_next = new_arc;
 	}
+	return SUCCEEDED;
 }
 
 template <class NodeType, class WeightType>
@@ -258,7 +261,7 @@ void ADJGraph<NodeType, WeightType>::print_Graph() const
 {
 	if (is_Empty())
 	{
-		cout << "Empty Graph";
+		cout << "Empty Graph" << endl;
 		return;
 	}
 	for (int i = 0; i < node_count; i++)
@@ -319,7 +322,6 @@ int ADJGraph<NodeType, WeightType>::get_FirstNode(const int &nodeorder) const
 	if (tmp)
 	{
 		int num = tmp->get_Num(nodeorder);
-		int to;
 		if (num == 1)
 			return tmp->to_node;
 		else
@@ -469,7 +471,12 @@ void ADJGraph<NodeType, WeightType>::delete_Arc(int u, int v) const
 {
 	ADJArc<NodeType, WeightType> *tmpu = node_array[u].first_arc;
 	ADJArc<NodeType, WeightType> *tmpv = node_array[v].first_arc;
-	ADJArc<NodeType, WeightType> *upre, *vpre, *unext, *vnext;
+	if (tmpu == NULL || tmpv == NULL)
+	{
+		cout << ">> this Edge dose NOT exist" << endl;
+		return;
+	}
+	ADJArc<NodeType, WeightType> *upre = NULL, *vpre = NULL, *unext = NULL, *vnext = NULL;
 	if ((tmpu->from_node == u && tmpu->to_node == v && tmpv->from_node == u && tmpv->to_node == v) || (tmpu->from_node == v && tmpu->to_node == u && tmpv->from_node == v && tmpv->to_node == u))
 	{
 		//cout << "tmpuv" << endl;
@@ -684,7 +691,7 @@ void ADJGraph<NodeType, WeightType>::delete_Arc(int u, int v) const
 	//cout << 1 << endl;
 	if (flag)
 	{
-		cout << "This edge is not exist" << endl;
+		cout << ">> this Edge dose NOT exist" << endl;
 		return;
 	}
 	while (1)
@@ -787,6 +794,7 @@ void ADJGraph<NodeType, WeightType>::delete_Node(int u)
 	{
 		node_array[i] = ADJNode<NodeType, WeightType>(node_array[i + 1].data, node_array[i + 1].first_arc);
 	}
+	node_array[node_count].first_arc = NULL;
 	node_count--;
 	for (int i = u; i < node_count; ++i)
 	{

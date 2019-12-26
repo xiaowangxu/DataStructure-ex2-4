@@ -12,13 +12,14 @@
 1577083966 d:\study\数据结构\datastructure-ex2-4\adjgraph.h
 	<iostream>
 
-1577277644 source:c:\users\王徐\shu-project\数据结构\datastructure-ex2-4\main.cpp
+1577359006 source:c:\users\王徐\shu-project\数据结构\datastructure-ex2-4\main.cpp
 	"ADJGraph.h"
 	<fstream>
 	<iostream>
 	<stdlib.h>
+	<string>
 
-1577276126 c:\users\王徐\shu-project\数据结构\datastructure-ex2-4\adjgraph.h
+1577358908 c:\users\王徐\shu-project\数据结构\datastructure-ex2-4\adjgraph.h
 	<iostream>
 	<iomanip>
 
