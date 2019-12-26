@@ -122,6 +122,8 @@ int main()
 		}
 
 		cout << endl;
+		Graph.DFS_traverse();
+		cout << endl;
 		system("PAUSE");
 		system("CLS");
 

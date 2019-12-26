@@ -96,6 +96,7 @@ private:
 	int max_size;
 	ADJNode<NodeType, WeightType> *node_array;
 	int simple_path(const int &st, const int &ed, int u, int len, int l);
+	void DFS(int u);
 
 public:
 	ADJGraph(const int MaxSize);
@@ -115,6 +116,7 @@ public:
 	bool is_Empty() const;
 	void clear();
 	int get_NodeCount() const;
+	void DFS_traverse();
 	NodeType get_NodeData(const int &nodeorder) const;
 };
 
@@ -808,5 +810,39 @@ void ADJGraph<NodeType, WeightType>::delete_Node(int u)
 		}
 	}
 }
+
+template <class NodeType, class WeightType>
+void ADJGraph<NodeType, WeightType>::DFS(int u) {
+	cout << " -> " << u;
+	ADJNode<NodeType, WeightType> *nodeu = get_Nodeptr(u),*nodev = NULL;
+	nodeu -> tag=1;
+	ADJArc<NodeType, WeightType> *arcu = nodeu-> first_arc;
+	while(arcu != NULL){
+		if(arcu->get_Num(u)==1){
+			nodev = get_Nodeptr(arcu->to_node);
+			if(nodev->tag==0) DFS(arcu->to_node);
+			arcu = arcu->from_next;
+		}
+		else{
+			nodev = get_Nodeptr(arcu->from_node);
+			if(nodev->tag==0) DFS(arcu->from_node);
+			arcu = arcu->to_next;
+		}
+	}
+}
+
+template <class NodeType, class WeightType>
+void ADJGraph<NodeType, WeightType>::DFS_traverse(){
+	cout << "DFS_traverse:";
+	for(int i = 0; i < node_count; ++i){
+		if((node_array+i)->tag==0){
+			cout << "\n *";
+			DFS(i);
+			cout << " -> *";
+		}
+	}
+	for(int i = 0; i < node_count; ++i) (node_array+i)->tag=0;
+}
+
 
 #endif
