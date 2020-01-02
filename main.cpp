@@ -191,17 +191,17 @@ int main()
 			for (int j = i + 1; j < Graph.get_NodeCount(); j++)
 			{
 				cout << "\t" << Graph.get_NodeData(i) << " to " << Graph.get_NodeData(j) << endl;
-				for (int l = 1; l < Graph.get_NodeCount() - 1; l++)
+				for (int l = 1; l <= Graph.get_NodeCount() - 1; l++)
 				{
 					array[l - 1] = Graph.simple_path(i, j, l);
 				}
 				cout << "Len\t";
-				for (int l = 1; l < Graph.get_NodeCount() - 1; l++)
+				for (int l = 1; l <= Graph.get_NodeCount() - 1; l++)
 				{
 					cout << l << "\t";
 				}
 				cout << "\nCount\t";
-				for (int l = 1; l < Graph.get_NodeCount() - 1; l++)
+				for (int l = 1; l <= Graph.get_NodeCount() - 1; l++)
 				{
 					cout << array[l - 1] << "\t";
 				}
@@ -213,7 +213,52 @@ int main()
 		cout << endl;
 		system("PAUSE");
 		system("CLS");
+        int c = -1,s;
+        char a,b;
+        while(c!=0){
+            system("CLS");
+            cout << "Test:" << endl;
+            //cin >> c;
+            cout << "1.加点" << endl;
+            cout << "2.加边" <<endl;
+            cout << "3.删点" <<endl;
+            cout << "4.删边" <<endl;
+            cout << "5.简单路径数" <<endl;
+            cout << "6.dfs" <<endl;
+            cout << "7.输出图" <<endl;
+            cout << "0.退出" << endl;
+            cin >> c;
+            switch(c){
+                case 1: cout << "输入点的名称" <<endl;
+                        cin >> a;
+                        Graph.add_Node(a);
+                        break;
+                case 2: cout << "输入边的名称" <<endl;
+                        cin >> a >> b;
+                        Graph.add_Arc(Graph.get_NodeOrder(a),Graph.get_NodeOrder(b),1);
+                        break;
+                case 3: cout << "输入点的名称" <<endl;
+                        cin >> a;
+                        Graph.delete_Node(Graph.get_NodeOrder(a));
+                        break;
+                case 4: cout << "输入边的名称" <<endl;
+                        cin >> a >> b;
+                        Graph.delete_Arc(Graph.get_NodeOrder(a),Graph.get_NodeOrder(b));
+                        break;
+                case 5: cout << "输入点的名称和路径长度" <<endl;
+                        cin >> a >> b >> s;
+                        cout << Graph.simple_path(Graph.get_NodeOrder(a),Graph.get_NodeOrder(b),s);
+                        break;
+                case 6: //cout << "dfs" <<endl;
+                        Graph.DFS_traverse();
+                        break;
+                case 7: cout << "图" <<endl;
+                        Graph.print_Graph();
+                        break;
 
+            }
+            system("pause");
+        }
 		cout << "--- TEST CASE : " << title << " ---" << endl
 			 << endl;
 		cout << "Clear Graph" << endl
