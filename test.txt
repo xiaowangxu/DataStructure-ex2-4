@@ -13,8 +13,7 @@ G H 7
 H I 8
 I A 9
 
-1
-E
+0
 0
 
 NoEdge

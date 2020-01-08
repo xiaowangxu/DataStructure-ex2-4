@@ -156,7 +156,7 @@ Stats ADJGraph<NodeType, WeightType>::add_Node(const NodeType &Data)
 	else
 	{
 		this->node_array[this->node_count].data = Data;
-		// this->node_array[this->node_count].first_arc = NULL;
+		this->node_array[this->node_count].first_arc = NULL;
 		this->node_count++;
 		return SUCCEEDED;
 	}
@@ -471,10 +471,11 @@ int ADJGraph<NodeType, WeightType>::simple_path(const int &st, const int &ed, in
 template <class NodeType, class WeightType>
 void ADJGraph<NodeType, WeightType>::delete_Arc(int u, int v) const
 {
-    if(is_Empty()){
-        cout << "Empty Graph" << endl;
-        return ;
-    }
+	if (is_Empty())
+	{
+		cout << "Empty Graph" << endl;
+		return;
+	}
 	ADJArc<NodeType, WeightType> *tmpu = node_array[u].first_arc;
 	ADJArc<NodeType, WeightType> *tmpv = node_array[v].first_arc;
 	if (tmpu == NULL || tmpv == NULL)
@@ -483,199 +484,235 @@ void ADJGraph<NodeType, WeightType>::delete_Arc(int u, int v) const
 		return;
 	}
 	ADJArc<NodeType, WeightType> *upre = NULL, *vpre = NULL, *unext = NULL, *vnext = NULL;
-	if ((tmpu->from_node == u && tmpu->to_node == v && tmpv->from_node == u && tmpv->to_node == v) || (tmpu->from_node == v && tmpu->to_node == u && tmpv->from_node == v && tmpv->to_node == u)) {
-        //cout << "tmpuv" << endl;
-        int numu = tmpu->get_Num(u);
-        if (numu == 1) {
-            node_array[u].first_arc = tmpu->from_next;
-            node_array[v].first_arc = tmpv->to_next;
-            delete tmpu;
-            tmpu = tmpv = NULL;
-        }
-        else {
-            node_array[u].first_arc = tmpu->to_next;
-            node_array[v].first_arc = tmpv->from_next;
-            delete tmpv;
-            tmpu = tmpv = NULL;
-        }
-        return;
-    }
-    if ((tmpu->from_node == u && tmpu->to_node == v) || (tmpu->from_node == v && tmpu->to_node == u)) {
-        //cout << "tmpu" << endl;
-        while (1) {
-            int num = tmpv->get_Num(v);
-            //cout << num << endl;
-            if (num == 1) {
-                if (tmpv->from_next->from_node == u || tmpv->from_next->to_node == u) {
-                    vpre = tmpv;
-                    tmpv = tmpv->from_next;
-                    //vnext = tmpv->from_node == v ? tmpv->from_next : tmpv->to_next;
-                    break;
-                }
-                tmpv = tmpv->from_next;
-            }
-            else {
-                if (tmpv->to_next->from_node == u || tmpv->to_next->to_node == u) {
-                    vpre = tmpv;
-                    tmpv = tmpv->to_next;
-                    //vnext = tmpv->from_node == v ? tmpv->from_next : tmpv->to_next;
-                    break;
-                }
-                tmpv = tmpv->to_next;
-            }
-        }
-        int numu = tmpu->get_Num(u);
-        int numv = tmpv->get_Num(v);
-        if (numu == 1)
-            node_array[u].first_arc = tmpu->from_next;
-        else
-            node_array[u].first_arc = tmpu->to_next;
-        if (numv == 1) {
-            if (vpre->get_Num(v) == 1)
-                vpre->from_next = tmpv->from_next;
-            else
-                vpre->to_next = tmpv->from_next;
-        }
-        else {
-            if (vpre->get_Num(v) == 1)
-                vpre->from_next = tmpv->to_next;
-            else
-                vpre->to_next = tmpv->to_next;
-        }
-        delete tmpu;
-        return;
-    }
-    if ((tmpv->from_node == u && tmpv->to_node == v) || (tmpv->from_node == v && tmpv->to_node == u)) {
-        //cout << "tmpv" << endl;
-        while (1) {
-            int num = tmpu->get_Num(u);
-            if (num == 1) {
-                if (tmpu->from_next->from_node == v || tmpu->from_next->to_node == v) {
-                    upre = tmpu;
-                    tmpu = tmpu->from_next;
-                    //unext = tmpu->from_node == u ? tmpu->from_next : tmpu->to_next;
-                    break;
-                }
-                tmpu = tmpu->from_next;
-            }
-            else {
-                if (tmpu->to_next->from_node == v || tmpu->to_next->to_node == v) {
-                    upre = tmpu;
-                    tmpu = tmpu->to_next;
-                    //unext = tmpu->from_node == u ? tmpu->from_next : tmpu->to_next;
-                    break;
-                }
-                tmpu = tmpu->to_next;
-            }
-        }
-        int numu = tmpu->get_Num(u);
-        int numv = tmpv->get_Num(v);
-        if (numv == 1)
-            node_array[v].first_arc = tmpv->from_next;
-        else
-            node_array[v].first_arc = tmpv->to_next;
-        if (numu == 1) {
-            if (upre->get_Num(u) == 1)
-                upre->from_next = tmpu->from_next;
-            else
-                upre->to_next = tmpu->from_next;
-        }
-        else {
-            if (upre->get_Num(u) == 1)
-                upre->from_next = tmpu->to_next;
-            else
-                upre->to_next = tmpu->to_next;
-        }
-        delete tmpv;
-        return;
-    }
-    int flag = 0;
-    while (1) {
-        int num = tmpu->get_Num(u);
-        //cout << num << endl;
-        if (num == 1) {
-            if (tmpu->from_next->from_node == v || tmpu->from_next->to_node == v) {
-                upre = tmpu;
-                tmpu = tmpu->from_next;
-                //unext = tmpu->from_node == u ? tmpu->from_next : tmpu->to_next;
-                break;
-            }
-            tmpu = tmpu->from_next;
-            if (tmpu == NULL) {
-                flag = 1;
-                break;
-            }
-        }
-        else {
-            if (tmpu->to_next->from_node == v || tmpu->to_next->to_node == v) {
-                upre = tmpu;
-                tmpu = tmpu->to_next;
-                //unext = tmpu->from_node == u ? tmpu->from_next : tmpu->to_next;
-                break;
-            }
-            tmpu = tmpu->to_next;
-            if (tmpu == NULL) {
-                flag = 1;
-                break;
-            }
-        }
-    }
-    //cout << 1 << endl;
-    if (flag) {
-        cout << ">> this Edge dose NOT exist" << endl;
-        return;
-    }
-    while (1) {
-        int num = tmpv->get_Num(v);
-    	//cout << num << endl;
-        if (num == 1) {
-            if (tmpv->from_next->from_node == u || tmpv->from_next->to_node == u) {
-                vpre = tmpv;
-                tmpv = tmpv->from_next;
-                //vnext = tmpv->from_node == v ? tmpv->from_next : tmpv->to_next;
-                break;
-            }
-            tmpv = tmpv->from_next;
-        }
-        else {
-            if (tmpv->to_next->from_node == u || tmpv->to_next->to_node == u) {
-                vpre = tmpv;
-                tmpv = tmpv->to_next;
-                //vnext = tmpv->from_node == v ? tmpv->from_next : tmpv->to_next;
-                break;
-            }
-            tmpv = tmpv->to_next;
-        }
-    }
+	if ((tmpu->from_node == u && tmpu->to_node == v && tmpv->from_node == u && tmpv->to_node == v) || (tmpu->from_node == v && tmpu->to_node == u && tmpv->from_node == v && tmpv->to_node == u))
+	{
+		//cout << "tmpuv" << endl;
+		int numu = tmpu->get_Num(u);
+		if (numu == 1)
+		{
+			node_array[u].first_arc = tmpu->from_next;
+			node_array[v].first_arc = tmpv->to_next;
+			delete tmpu;
+			tmpu = tmpv = NULL;
+		}
+		else
+		{
+			node_array[u].first_arc = tmpu->to_next;
+			node_array[v].first_arc = tmpv->from_next;
+			delete tmpv;
+			tmpu = tmpv = NULL;
+		}
+		return;
+	}
+	if ((tmpu->from_node == u && tmpu->to_node == v) || (tmpu->from_node == v && tmpu->to_node == u))
+	{
+		//cout << "tmpu" << endl;
+		while (1)
+		{
+			int num = tmpv->get_Num(v);
+			//cout << num << endl;
+			if (num == 1)
+			{
+				if (tmpv->from_next->from_node == u || tmpv->from_next->to_node == u)
+				{
+					vpre = tmpv;
+					tmpv = tmpv->from_next;
+					//vnext = tmpv->from_node == v ? tmpv->from_next : tmpv->to_next;
+					break;
+				}
+				tmpv = tmpv->from_next;
+			}
+			else
+			{
+				if (tmpv->to_next->from_node == u || tmpv->to_next->to_node == u)
+				{
+					vpre = tmpv;
+					tmpv = tmpv->to_next;
+					//vnext = tmpv->from_node == v ? tmpv->from_next : tmpv->to_next;
+					break;
+				}
+				tmpv = tmpv->to_next;
+			}
+		}
+		int numu = tmpu->get_Num(u);
+		int numv = tmpv->get_Num(v);
+		if (numu == 1)
+			node_array[u].first_arc = tmpu->from_next;
+		else
+			node_array[u].first_arc = tmpu->to_next;
+		if (numv == 1)
+		{
+			if (vpre->get_Num(v) == 1)
+				vpre->from_next = tmpv->from_next;
+			else
+				vpre->to_next = tmpv->from_next;
+		}
+		else
+		{
+			if (vpre->get_Num(v) == 1)
+				vpre->from_next = tmpv->to_next;
+			else
+				vpre->to_next = tmpv->to_next;
+		}
+		delete tmpu;
+		return;
+	}
+	if ((tmpv->from_node == u && tmpv->to_node == v) || (tmpv->from_node == v && tmpv->to_node == u))
+	{
+		//cout << "tmpv" << endl;
+		while (1)
+		{
+			int num = tmpu->get_Num(u);
+			if (num == 1)
+			{
+				if (tmpu->from_next->from_node == v || tmpu->from_next->to_node == v)
+				{
+					upre = tmpu;
+					tmpu = tmpu->from_next;
+					//unext = tmpu->from_node == u ? tmpu->from_next : tmpu->to_next;
+					break;
+				}
+				tmpu = tmpu->from_next;
+			}
+			else
+			{
+				if (tmpu->to_next->from_node == v || tmpu->to_next->to_node == v)
+				{
+					upre = tmpu;
+					tmpu = tmpu->to_next;
+					//unext = tmpu->from_node == u ? tmpu->from_next : tmpu->to_next;
+					break;
+				}
+				tmpu = tmpu->to_next;
+			}
+		}
+		int numu = tmpu->get_Num(u);
+		int numv = tmpv->get_Num(v);
+		if (numv == 1)
+			node_array[v].first_arc = tmpv->from_next;
+		else
+			node_array[v].first_arc = tmpv->to_next;
+		if (numu == 1)
+		{
+			if (upre->get_Num(u) == 1)
+				upre->from_next = tmpu->from_next;
+			else
+				upre->to_next = tmpu->from_next;
+		}
+		else
+		{
+			if (upre->get_Num(u) == 1)
+				upre->from_next = tmpu->to_next;
+			else
+				upre->to_next = tmpu->to_next;
+		}
+		delete tmpv;
+		return;
+	}
+	int flag = 0;
+	while (1)
+	{
+		int num = tmpu->get_Num(u);
+		//cout << num << endl;
+		if (num == 1)
+		{
+			if (tmpu->from_next->from_node == v || tmpu->from_next->to_node == v)
+			{
+				upre = tmpu;
+				tmpu = tmpu->from_next;
+				//unext = tmpu->from_node == u ? tmpu->from_next : tmpu->to_next;
+				break;
+			}
+			tmpu = tmpu->from_next;
+			if (tmpu == NULL)
+			{
+				flag = 1;
+				break;
+			}
+		}
+		else
+		{
+			if (tmpu->to_next->from_node == v || tmpu->to_next->to_node == v)
+			{
+				upre = tmpu;
+				tmpu = tmpu->to_next;
+				//unext = tmpu->from_node == u ? tmpu->from_next : tmpu->to_next;
+				break;
+			}
+			tmpu = tmpu->to_next;
+			if (tmpu == NULL)
+			{
+				flag = 1;
+				break;
+			}
+		}
+	}
+	//cout << 1 << endl;
+	if (flag)
+	{
+		cout << ">> this Edge dose NOT exist" << endl;
+		return;
+	}
+	while (1)
+	{
+		int num = tmpv->get_Num(v);
+		//cout << num << endl;
+		if (num == 1)
+		{
+			if (tmpv->from_next->from_node == u || tmpv->from_next->to_node == u)
+			{
+				vpre = tmpv;
+				tmpv = tmpv->from_next;
+				//vnext = tmpv->from_node == v ? tmpv->from_next : tmpv->to_next;
+				break;
+			}
+			tmpv = tmpv->from_next;
+		}
+		else
+		{
+			if (tmpv->to_next->from_node == u || tmpv->to_next->to_node == u)
+			{
+				vpre = tmpv;
+				tmpv = tmpv->to_next;
+				//vnext = tmpv->from_node == v ? tmpv->from_next : tmpv->to_next;
+				break;
+			}
+			tmpv = tmpv->to_next;
+		}
+	}
 	int numu = upre->get_Num(u);
 	int numv = vpre->get_Num(v);
-	if (numu == 1) {
-		if (tmpu->get_Num(u) == 1) 
+	if (numu == 1)
+	{
+		if (tmpu->get_Num(u) == 1)
 			upre->from_next = tmpu->from_next;
 		else
 			upre->from_next = tmpu->to_next;
 	}
-	else {
+	else
+	{
 		if (tmpu->get_Num(u) == 1)
 			upre->to_next = tmpu->from_next;
 		else
 			upre->to_next = tmpu->to_next;
 	}
-	if(numv == 1) {
+	if (numv == 1)
+	{
 		if (tmpu->get_Num(v) == 1)
 			vpre->from_next = tmpv->from_next;
 		else
 			vpre->from_next = tmpv->to_next;
 	}
-	else {
+	else
+	{
 		if (tmpv->get_Num(v) == 1)
 			vpre->to_next = tmpv->from_next;
 		else
-			vpre->to_next = tmpv->to_next; 
+			vpre->to_next = tmpv->to_next;
 	}
 	delete tmpu;
 	tmpu = tmpv = NULL;
-	return ;
+	return;
 }
 
 template <class NodeType, class WeightType>
@@ -701,8 +738,7 @@ void ADJGraph<NodeType, WeightType>::delete_Node(int u)
 	{
 		node_array[i] = ADJNode<NodeType, WeightType>(node_array[i + 1].data, node_array[i + 1].first_arc);
 	}
-	node_array[node_count].first_arc = NULL;
-	node_count--;
+	node_array[--node_count].first_arc = NULL;
 	for (int i = u; i < node_count; ++i)
 	{
 		arcu = get_Nodeptr(i)->first_arc;
